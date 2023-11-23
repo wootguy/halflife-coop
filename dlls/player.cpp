@@ -2811,6 +2811,7 @@ edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer )
 		// we haven't found a place to spawn yet,  so kill any guy at the first spawn point and spawn there
 		if ( !FNullEnt( pSpot ) )
 		{
+			/* DISABLED - telefragging spawnpoints not needed with player unstucking plugin
 			CBaseEntity *ent = NULL;
 			while ( (ent = UTIL_FindEntityInSphere( ent, pSpot->pev->origin, 128 )) != NULL )
 			{
@@ -2818,6 +2819,7 @@ edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer )
 				if ( ent->IsPlayer() && !(ent->edict() == player) )
 					ent->TakeDamage( VARS(INDEXENT(0)), VARS(INDEXENT(0)), 300, DMG_GENERIC );
 			}
+			*/
 			goto ReturnSpot;
 		}
 	}
