@@ -44,6 +44,9 @@
 #include "winsani_in.h"
 #include "windows.h"
 #include "winsani_out.h"
+#include <algorithm>
+#undef min
+#undef max
 #else // _WIN32
 #define FALSE 0
 #define TRUE (!FALSE)
