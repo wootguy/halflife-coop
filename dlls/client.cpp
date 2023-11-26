@@ -108,6 +108,7 @@ void ClientDisconnect( edict_t *pEntity )
 	if (g_fGameOver)
 		return;
 
+	/* let plugins handle this to make edits if needed
 	char text[256] = "" ;
 	if ( pEntity->v.netname )
 		_snprintf( text, sizeof(text), "- %s has left the game\n", STRING(pEntity->v.netname) );
@@ -116,6 +117,7 @@ void ClientDisconnect( edict_t *pEntity )
 		WRITE_BYTE( ENTINDEX(pEntity) );
 		WRITE_STRING( text );
 	MESSAGE_END();
+	*/
 
 	CSound *pSound;
 	pSound = CSoundEnt::SoundPointerForIndex( CSoundEnt::ClientSoundIndex( pEntity ) );
