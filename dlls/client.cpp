@@ -1742,7 +1742,7 @@ void UpdateClientData ( const edict_t *ent, int sendweapons, struct clientdata_s
 			if ( pl->m_pActiveItem )
 			{
 				CBasePlayerWeapon *gun;
-				gun = (CBasePlayerWeapon*)((CBasePlayerItem*)pl->m_pActiveItem.GetEntity())->GetWeaponPtr();
+				gun = (CBasePlayerWeapon*)(((CBasePlayerItem*)pl->m_pActiveItem.GetEntity())->GetWeaponPtr());
 				if ( gun && gun->UseDecrement() )
 				{
 					ItemInfo II;

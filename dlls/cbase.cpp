@@ -485,7 +485,7 @@ CBaseEntity * EHANDLE :: operator = (CBaseEntity *pEntity)
 
 EHANDLE :: operator int ()
 {
-	return GetEdict() != NULL;
+	return GetEntity() != NULL;
 }
 
 CBaseEntity * EHANDLE :: operator -> ()
