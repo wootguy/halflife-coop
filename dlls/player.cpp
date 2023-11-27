@@ -3190,8 +3190,10 @@ void CBasePlayer::SelectLastItem(void)
 	CBasePlayerItem *pTemp = (CBasePlayerItem*)m_pActiveItem.GetEntity();
 	m_pActiveItem = m_pLastItem;
 	m_pLastItem = pTemp;
-	pTemp->Deploy( );
-	pTemp->UpdateItemInfo( );
+	if (pTemp) {
+		pTemp->Deploy();
+		pTemp->UpdateItemInfo();
+	}
 }
 
 //==============================================
