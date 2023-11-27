@@ -122,7 +122,8 @@ private:
 	edict_t *m_pent;
 	int		m_serialnumber;
 public:
-	edict_t *Get( void );
+	edict_t *GetEdict( void );
+	CBaseEntity *GetEntity( void );
 	edict_t *Set( edict_t *pent );
 
 	operator int ();
