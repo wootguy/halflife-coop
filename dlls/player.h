@@ -178,10 +178,10 @@ public:
 	int			m_iFOV;			// field of view
 	int			m_iClientFOV;	// client's known FOV
 	// usable player items 
-	EHANDLE	m_rgpPlayerItems[MAX_ITEM_TYPES];
-	EHANDLE m_pActiveItem;
-	EHANDLE m_pClientActiveItem;  // client version of the active item
-	EHANDLE m_pLastItem;
+	CBasePlayerItem	*m_rgpPlayerItems[MAX_ITEM_TYPES];
+	CBasePlayerItem *m_pActiveItem;
+	CBasePlayerItem *m_pClientActiveItem;  // client version of the active item
+	CBasePlayerItem *m_pLastItem;
 	// shared ammo slots
 	int	m_rgAmmo[MAX_AMMO_SLOTS];
 	int	m_rgAmmoLast[MAX_AMMO_SLOTS];

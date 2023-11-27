@@ -436,21 +436,17 @@ void SaveReadFields( SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseD
 }
 
 
-edict_t * EHANDLE::GetEdict( void ) 
+edict_t * EHANDLE::Get( void ) 
 { 
 	if (m_pent)
 	{
-		if (m_pent->serialnumber == m_serialnumber && !m_pent->free) 
+		if (m_pent->serialnumber == m_serialnumber) 
 			return m_pent; 
 		else
 			return NULL;
 	}
-	return NULL;
+	return NULL; 
 };
-
-CBaseEntity* EHANDLE::GetEntity(void) {
-	return (CBaseEntity*)GET_PRIVATE(GetEdict());
-}
 
 edict_t * EHANDLE::Set( edict_t *pent ) 
 { 
@@ -463,7 +459,7 @@ edict_t * EHANDLE::Set( edict_t *pent )
 
 EHANDLE :: operator CBaseEntity *() 
 { 
-	return (CBaseEntity *)GET_PRIVATE(GetEdict( ) );
+	return (CBaseEntity *)GET_PRIVATE( Get( ) ); 
 };
 
 
@@ -485,12 +481,12 @@ CBaseEntity * EHANDLE :: operator = (CBaseEntity *pEntity)
 
 EHANDLE :: operator int ()
 {
-	return GetEntity() != NULL;
+	return Get() != NULL;
 }
 
 CBaseEntity * EHANDLE :: operator -> ()
 {
-	return (CBaseEntity *)GET_PRIVATE( GetEdict( ) ); 
+	return (CBaseEntity *)GET_PRIVATE( Get( ) ); 
 }
 
 

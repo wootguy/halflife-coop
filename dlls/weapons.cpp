@@ -829,7 +829,7 @@ int CBasePlayerWeapon::UpdateClientData( CBasePlayer *pPlayer )
 	if ( this == pPlayer->m_pActiveItem ||
 		 this == pPlayer->m_pClientActiveItem )
 	{
-		if ( pPlayer->m_pActiveItem.GetEntity() != pPlayer->m_pClientActiveItem.GetEntity())
+		if ( pPlayer->m_pActiveItem != pPlayer->m_pClientActiveItem )
 		{
 			bSend = TRUE;
 		}
