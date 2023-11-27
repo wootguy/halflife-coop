@@ -530,7 +530,7 @@ BOOL CHalfLifeMultiplay::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity
 		return true;
 	}
 	bool isOtherPlayer = pAttacker && pAttacker->IsPlayer() && pAttacker->entindex() != pPlayer->entindex();
-	return !isOtherPlayer;
+	return !isOtherPlayer || friendlyfire.value != 0;
 }
 
 //=========================================================
