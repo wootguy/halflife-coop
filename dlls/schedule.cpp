@@ -893,7 +893,7 @@ void CBaseMonster :: StartTask ( Task_t *pTask )
 		{
 			Activity newActivity;
 
-			if ( (m_hTargetEnt->pev->origin - pev->origin).Length() < 1 )
+			if (!m_hTargetEnt.Get() || (m_hTargetEnt->pev->origin - pev->origin).Length() < 1)
 				TaskComplete();
 			else
 			{
