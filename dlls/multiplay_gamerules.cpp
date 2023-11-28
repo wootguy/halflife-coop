@@ -559,7 +559,7 @@ void CHalfLifeMultiplay :: PlayerSpawn( CBasePlayer *pPlayer )
 
 	pPlayer->pev->weapons |= (1<<WEAPON_SUIT);
 	
-	addDefault = TRUE;
+	addDefault = FALSE;
 
 	while ( pWeaponEntity = UTIL_FindEntityByClassname( pWeaponEntity, "game_player_equip" ))
 	{
@@ -1078,14 +1078,14 @@ float CHalfLifeMultiplay::FlHEVChargerRechargeTime( void )
 //=========================================================
 int CHalfLifeMultiplay::DeadPlayerWeapons( CBasePlayer *pPlayer )
 {
-	return GR_PLR_DROP_GUN_ACTIVE;
+	return GR_PLR_DROP_GUN_NO;
 }
 
 //=========================================================
 //=========================================================
 int CHalfLifeMultiplay::DeadPlayerAmmo( CBasePlayer *pPlayer )
 {
-	return GR_PLR_DROP_AMMO_ACTIVE;
+	return GR_PLR_DROP_AMMO_NO;
 }
 
 edict_t *CHalfLifeMultiplay::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
