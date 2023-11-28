@@ -167,7 +167,7 @@ void CStomp::Think( void )
 		}
 		pev->dmgtime += STOMP_INTERVAL;
 		// Scale has the "life" of this effect
-		pev->scale -= STOMP_INTERVAL * pev->speed;
+		pev->scale -= STOMP_INTERVAL * pev->speed*0.5f;
 		if ( pev->scale <= 0 )
 		{
 			// Life has run out
@@ -479,7 +479,7 @@ void CGargantua::StompAttack( void )
 	Vector vecEnd = (vecAim * 1024) + vecStart;
 
 	UTIL_TraceLine( vecStart, vecEnd, ignore_monsters, edict(), &trace );
-	CStomp::StompCreate( vecStart, trace.vecEndPos, 0 );
+	CStomp::StompCreate( vecStart, trace.vecEndPos, 256 );
 	UTIL_ScreenShake( pev->origin, 12.0, 100.0, 2.0, 1000 );
 	EMIT_SOUND_DYN ( edict(), CHAN_WEAPON, pStompSounds[ RANDOM_LONG(0,ARRAYSIZE(pStompSounds)-1) ], 1.0, ATTN_GARG, 0, PITCH_NORM + RANDOM_LONG(-10,10) );
 
