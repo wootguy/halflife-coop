@@ -45,6 +45,7 @@ class CTripmineGrenade : public CGrenade
 {
 	void Spawn( void );
 	void Precache( void );
+	void KeyValue(KeyValueData* pkvd);
 
 	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );
@@ -72,6 +73,7 @@ class CTripmineGrenade : public CGrenade
 	Vector		m_posOwner;
 	Vector		m_angleOwner;
 	edict_t		*m_pRealOwner;// tracelines don't hit PEV->OWNER, which means a player couldn't detonate his own trip mine, so we store the owner here.
+	int m_mode; // if 1, respawn after exploding, for a multiplayer version of c3a2d
 };
 
 LINK_ENTITY_TO_CLASS( monster_tripmine, CTripmineGrenade );
@@ -109,7 +111,7 @@ void CTripmineGrenade :: Spawn( void )
 	UTIL_SetSize(pev, Vector( -8, -8, -8), Vector(8, 8, 8));
 	UTIL_SetOrigin( pev, pev->origin );
 
-	if (pev->spawnflags & 1)
+	if ((pev->spawnflags & 1) || m_mode == 1)
 	{
 		// power up quickly
 		m_flPowerUp = gpGlobals->time + 1.0;
@@ -149,6 +151,17 @@ void CTripmineGrenade :: Precache( void )
 	PRECACHE_SOUND("weapons/mine_deploy.wav");
 	PRECACHE_SOUND("weapons/mine_activate.wav");
 	PRECACHE_SOUND("weapons/mine_charge.wav");
+}
+
+void CTripmineGrenade::KeyValue(KeyValueData* pkvd)
+{
+	if (FStrEq(pkvd->szKeyName, "mode"))
+	{
+		m_mode = atoi(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else
+		CGrenade::KeyValue(pkvd);
 }
 
 
@@ -313,6 +326,9 @@ void CTripmineGrenade :: BeamBreakThink( void  )
 
 int CTripmineGrenade :: TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType )
 {
+	if (m_mode == 1 && gpGlobals->time < m_flPowerUp) {
+		return FALSE;
+	}
 	if (gpGlobals->time < m_flPowerUp && flDamage < pev->health)
 	{
 		// disable
@@ -341,14 +357,36 @@ void CTripmineGrenade::Killed( entvars_t *pevAttacker, int iGib )
 	EMIT_SOUND( ENT(pev), CHAN_BODY, "common/null.wav", 0.5, ATTN_NORM ); // shut off chargeup
 }
 
-
 void CTripmineGrenade::DelayDeathThink( void )
 {
+	Vector oldOrigin = pev->origin;
+
 	KillBeam();
 	TraceResult tr;
 	UTIL_TraceLine ( pev->origin + m_vecDir * 8, pev->origin - m_vecDir * 64,  dont_ignore_monsters, ENT(pev), & tr);
 
 	Explode( &tr, DMG_BLAST );
+
+	if (m_mode == 1) {
+		edict_t* pent = CREATE_NAMED_ENTITY(MAKE_STRING("monster_tripmine"));
+		if (FNullEnt(pent))
+		{
+			ALERT(at_console, "NULL Ent in tripmine respawn!\n");
+			return;
+		}
+		CBaseEntity* newMine = Instance(pent);
+		newMine->pev->origin = oldOrigin;
+		newMine->pev->angles = pev->angles;
+
+		KeyValueData data;
+		data.szClassName = "monster_tripmine";
+		data.szKeyName = "mode";
+		data.szValue = "1";
+		data.fHandled = FALSE;
+		newMine->KeyValue(&data);
+
+		DispatchSpawn(newMine->edict());
+	}
 }
 #endif
 
