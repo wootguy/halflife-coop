@@ -186,21 +186,21 @@ void CHeadCrab :: SetYawSpeed ( void )
 	switch ( m_Activity )
 	{
 	case ACT_IDLE:			
-		ys = 30;
+		ys = 60;
 		break;
 	case ACT_RUN:			
 	case ACT_WALK:			
-		ys = 20;
+		ys = 40;
 		break;
 	case ACT_TURN_LEFT:
 	case ACT_TURN_RIGHT:
-		ys = 60;
+		ys = 90;
 		break;
 	case ACT_RANGE_ATTACK1:	
-		ys = 30;
+		ys = 60;
 		break;
 	default:
-		ys = 30;
+		ys = 60;
 		break;
 	}
 
@@ -289,7 +289,7 @@ void CHeadCrab :: Spawn()
 	pev->health			= gSkillData.headcrabHealth;
 	pev->view_ofs		= Vector ( 0, 0, 20 );// position of the eyes relative to monster's origin.
 	pev->yaw_speed		= 5;//!!! should we put this in the monster's changeanim function since turn rates may vary with state/anim?
-	m_flFieldOfView		= 0.5;// indicates the width of this monster's forward view cone ( as a dotproduct result )
+	m_flFieldOfView		= 0.0;// indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState		= MONSTERSTATE_NONE;
 
 	MonsterInit();

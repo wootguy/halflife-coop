@@ -291,16 +291,16 @@ void CBarney :: SetYawSpeed ( void )
 	switch ( m_Activity )
 	{
 	case ACT_IDLE:		
-		ys = 70;
+		ys = 140;
 		break;
 	case ACT_WALK:
-		ys = 70;
+		ys = 140;
 		break;
 	case ACT_RUN:
-		ys = 90;
+		ys = 180;
 		break;
 	default:
-		ys = 70;
+		ys = 140;
 		break;
 	}
 
