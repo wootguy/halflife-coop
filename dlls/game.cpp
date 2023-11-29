@@ -450,6 +450,39 @@ cvar_t	sk_player_leg3	= { "sk_player_leg3","1" };
 
 // END Cvars for Skill Level settings
 
+#include "cbase.h"
+#include "player.h"
+
+void giball() {
+	for (int i = 1; i <= gpGlobals->maxClients; i++) {
+		CBasePlayer* plr = (CBasePlayer*)GET_PRIVATE(INDEXENT(i));
+		if (!plr || !STRING(plr->pev->netname) || !plr->IsAlive()) {
+			continue;
+		}
+
+		plr->Killed(plr->pev, GIB_ALWAYS);
+	}
+}
+
+void triggerTarget() {
+	const char* target = CMD_ARGV(1);
+	CBaseEntity* world = (CBaseEntity*)GET_PRIVATE(INDEXENT(0));
+	int count = 0;
+
+	if (world && target[0] != '\0') {
+		edict_t* pTarget = NULL;
+		while (!FNullEnt(pTarget = FIND_ENTITY_BY_TARGETNAME(pTarget, target))) {
+			CBaseEntity* ent = CBaseEntity::Instance(pTarget);
+			if (ent) {
+				ent->Use(world, world, USE_TOGGLE, 0);
+				count++;
+			}
+		}
+	}
+
+	ALERT(at_console, UTIL_VarArgs("Triggered %d entities\n", count));
+}
+
 // Register your console variables here
 // This gets called one time when the game is initialied
 void GameDLLInit( void )
@@ -459,6 +492,9 @@ void GameDLLInit( void )
 	g_psv_gravity = CVAR_GET_POINTER( "sv_gravity" );
 	g_psv_aim = CVAR_GET_POINTER( "sv_aim" );
 	g_footsteps = CVAR_GET_POINTER( "mp_footsteps" );
+
+	g_engfuncs.pfnAddServerCommand("giball", giball);
+	g_engfuncs.pfnAddServerCommand("trigger", triggerTarget);
 
 	CVAR_REGISTER (&displaysoundlist);
 	CVAR_REGISTER( &allow_spectators );

@@ -95,7 +95,7 @@ TYPEDESCRIPTION	CBasePlayer::m_playerSaveData[] =
 	DEFINE_FIELD( CBasePlayer, m_lastDamageAmount, FIELD_INTEGER ),
 
 	DEFINE_ARRAY( CBasePlayer, m_rgpPlayerItems, FIELD_CLASSPTR, MAX_ITEM_TYPES ),
-	DEFINE_FIELD( CBasePlayer, m_pActiveItem, FIELD_CLASSPTR ),
+	DEFINE_FIELD( CBasePlayer, m_pActiveItem, FIELD_EHANDLE),
 	DEFINE_FIELD( CBasePlayer, m_pLastItem, FIELD_CLASSPTR ),
 	
 	DEFINE_ARRAY( CBasePlayer, m_rgAmmo, FIELD_INTEGER, MAX_AMMO_SLOTS ),
@@ -716,7 +716,7 @@ void CBasePlayer::PackDeadPlayerItems( void )
 				switch( iWeaponRules )
 				{
 				case GR_PLR_DROP_GUN_ACTIVE:
-					if ( m_pActiveItem && pPlayerItem == m_pActiveItem )
+					if ( m_pActiveItem && pPlayerItem == m_pActiveItem.GetEntity() )
 					{
 						// this is the active item. Pack it.
 						rgpPackWeapons[ iPW++ ] = (CBasePlayerWeapon *)pPlayerItem;
@@ -3150,7 +3150,7 @@ void CBasePlayer::SelectItem(const char *pstr)
 		return;
 
 	
-	if (pItem == m_pActiveItem)
+	if (pItem == m_pActiveItem.GetEntity())
 		return;
 
 	ResetAutoaim( );
@@ -3761,7 +3761,7 @@ int CBasePlayer::AddPlayerItem( CBasePlayerItem *pItem )
 
 int CBasePlayer::RemovePlayerItem( CBasePlayerItem *pItem )
 {
-	if (m_pActiveItem == pItem)
+	if (m_pActiveItem.GetEntity() == pItem)
 	{
 		ResetAutoaim( );
 		pItem->Holster( );
@@ -4559,7 +4559,7 @@ void CBasePlayer::DropPlayerItem ( char *pszItemName )
 			else
 			{
 				// trying to drop active item
-				if ( pWeapon == m_pActiveItem )
+				if ( pWeapon == m_pActiveItem.GetEntity() )
 				{
 					// active item!
 					break;

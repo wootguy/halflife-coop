@@ -469,7 +469,7 @@ EHANDLE :: operator CBaseEntity *()
 
 CBaseEntity * EHANDLE :: operator = (CBaseEntity *pEntity)
 {
-	if (pEntity)
+	if (pEntity && !pEntity->edict()->free)
 	{
 		m_pent = ENT( pEntity->pev );
 		if (m_pent)
