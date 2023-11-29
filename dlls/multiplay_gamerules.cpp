@@ -305,14 +305,15 @@ BOOL CHalfLifeMultiplay::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBasePlayerI
 		// player doesn't have an active item!
 		return TRUE;
 	}
+	CBasePlayerItem* item = (CBasePlayerItem*)pPlayer->m_pActiveItem.GetEntity();
 
-	if ( !pPlayer->m_pActiveItem->CanHolster() )
+	if ( !item->CanHolster() )
 	{
 		// can't put away the active item.
 		return FALSE;
 	}
 
-	if ( pWeapon->iWeight() > pPlayer->m_pActiveItem->iWeight() )
+	if ( pWeapon->iWeight() > item->iWeight() )
 	{
 		return TRUE;
 	}
@@ -699,7 +700,7 @@ void CHalfLifeMultiplay::DeathNotice( CBasePlayer *pVictim, entvars_t *pKiller, 
 				
 				if ( pPlayer->m_pActiveItem )
 				{
-					killer_weapon_name = pPlayer->m_pActiveItem->pszName();
+					killer_weapon_name = ((CBasePlayerItem*)pPlayer->m_pActiveItem.GetEntity())->pszName();
 				}
 			}
 			else

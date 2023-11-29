@@ -750,19 +750,20 @@ void CBasePlayer::PackDeadPlayerItems( void )
 					iPackAmmo[ iPA++ ] = i;
 					break;
 
-				case GR_PLR_DROP_AMMO_ACTIVE:
-					if ( m_pActiveItem && i == m_pActiveItem->PrimaryAmmoIndex() ) 
+				case GR_PLR_DROP_AMMO_ACTIVE: {
+					CBasePlayerItem* item = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+					if (item && i == item->PrimaryAmmoIndex())
 					{
 						// this is the primary ammo type for the active weapon
-						iPackAmmo[ iPA++ ] = i;
+						iPackAmmo[iPA++] = i;
 					}
-					else if ( m_pActiveItem && i == m_pActiveItem->SecondaryAmmoIndex() ) 
+					else if (item && i == item->SecondaryAmmoIndex())
 					{
 						// this is the secondary ammo type for the active weapon
-						iPackAmmo[ iPA++ ] = i;
+						iPackAmmo[iPA++] = i;
 					}
 					break;
-
+				}
 				default:
 					break;
 				}
@@ -808,8 +809,9 @@ void CBasePlayer::RemoveAllItems( BOOL removeSuit )
 {
 	if (m_pActiveItem)
 	{
+		CBasePlayerItem* item = (CBasePlayerItem*)m_pActiveItem.GetEntity();
 		ResetAutoaim( );
-		m_pActiveItem->Holster( );
+		item->Holster( );
 		m_pActiveItem = NULL;
 	}
 
@@ -828,8 +830,9 @@ void CBasePlayer::RemoveAllItems( BOOL removeSuit )
 		m_pActiveItem = m_rgpPlayerItems[i];
 		while (m_pActiveItem)
 		{
-			pPendingItem = m_pActiveItem->m_pNext; 
-			m_pActiveItem->Drop( );
+			CBasePlayerItem* item = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+			pPendingItem = item->m_pNext;
+			item->Drop( );
 			m_pActiveItem = pPendingItem;
 		}
 		m_rgpPlayerItems[i] = NULL;
@@ -870,7 +873,7 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 
 	// Holster weapon immediately, to allow it to cleanup
 	if ( m_pActiveItem )
-		m_pActiveItem->Holster( );
+		((CBasePlayerItem*)m_pActiveItem.GetEntity())->Holster();
 
 	g_pGameRules->PlayerKilled( this, pevAttacker, g_pevLastInflictor );
 
@@ -1424,7 +1427,7 @@ void CBasePlayer::StartObserver( Vector vecPosition, Vector vecViewAngle )
 
 	// Holster weapon immediately, to allow it to cleanup
 	if (m_pActiveItem)
-		m_pActiveItem->Holster( );
+		((CBasePlayerItem*)m_pActiveItem.GetEntity())->Holster( );
 
 	if ( m_pTank != NULL )
 	{
@@ -3075,14 +3078,15 @@ void CBasePlayer::SelectNextItem( int iItem )
 	CBasePlayerItem *pItem;
 
 	pItem = m_rgpPlayerItems[ iItem ];
-	
+	CBasePlayerItem* activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+
 	if (!pItem)
 		return;
 
-	if (pItem == m_pActiveItem)
+	if (pItem == activeItem)
 	{
 		// select the next one in the chain
-		pItem = m_pActiveItem->m_pNext; 
+		pItem = activeItem->m_pNext;
 		if (! pItem)
 		{
 			return;
@@ -3094,8 +3098,8 @@ void CBasePlayer::SelectNextItem( int iItem )
 			pLast = pLast->m_pNext;
 
 		// relink chain
-		pLast->m_pNext = m_pActiveItem;
-		m_pActiveItem->m_pNext = NULL;
+		pLast->m_pNext = activeItem;
+		activeItem->m_pNext = NULL;
 		m_rgpPlayerItems[ iItem ] = pItem;
 	}
 
@@ -3104,15 +3108,16 @@ void CBasePlayer::SelectNextItem( int iItem )
 	// FIX, this needs to queue them up and delay
 	if (m_pActiveItem)
 	{
-		m_pActiveItem->Holster( );
+		activeItem->Holster( );
 	}
 	
 	m_pActiveItem = pItem;
 
 	if (m_pActiveItem)
 	{
-		m_pActiveItem->Deploy( );
-		m_pActiveItem->UpdateItemInfo( );
+		activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+		activeItem->Deploy( );
+		activeItem->UpdateItemInfo( );
 	}
 }
 
@@ -3150,17 +3155,20 @@ void CBasePlayer::SelectItem(const char *pstr)
 
 	ResetAutoaim( );
 
+	CBasePlayerItem* activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+
 	// FIX, this needs to queue them up and delay
-	if (m_pActiveItem)
-		m_pActiveItem->Holster( );
+	if (activeItem)
+		activeItem->Holster( );
 	
-	m_pLastItem = m_pActiveItem;
+	m_pLastItem = activeItem;
 	m_pActiveItem = pItem;
 
 	if (m_pActiveItem)
 	{
-		m_pActiveItem->Deploy( );
-		m_pActiveItem->UpdateItemInfo( );
+		activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+		activeItem->Deploy( );
+		activeItem->UpdateItemInfo( );
 	}
 }
 
@@ -3172,7 +3180,9 @@ void CBasePlayer::SelectLastItem(void)
 		return;
 	}
 
-	if ( m_pActiveItem && !m_pActiveItem->CanHolster() )
+	CBasePlayerItem* activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+
+	if (activeItem && !activeItem->CanHolster() )
 	{
 		return;
 	}
@@ -3180,14 +3190,18 @@ void CBasePlayer::SelectLastItem(void)
 	ResetAutoaim( );
 
 	// FIX, this needs to queue them up and delay
-	if (m_pActiveItem)
-		m_pActiveItem->Holster( );
+	if (activeItem)
+		activeItem->Holster( );
 	
-	CBasePlayerItem *pTemp = m_pActiveItem;
+	CBasePlayerItem *pTemp = activeItem;
 	m_pActiveItem = m_pLastItem;
 	m_pLastItem = pTemp;
-	m_pActiveItem->Deploy( );
-	m_pActiveItem->UpdateItemInfo( );
+
+	if (m_pActiveItem) {
+		activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+		activeItem->Deploy( );
+		activeItem->UpdateItemInfo( );
+	}
 }
 
 //==============================================
@@ -3704,7 +3718,7 @@ int CBasePlayer::AddPlayerItem( CBasePlayerItem *pItem )
 				// ugly hack to update clip w/o an update clip message
 				pInsert->UpdateItemInfo( );
 				if (m_pActiveItem)
-					m_pActiveItem->UpdateItemInfo( );
+					((CBasePlayerItem*)m_pActiveItem.GetEntity())->UpdateItemInfo();
 
 				pItem->Kill( );
 			}
@@ -3850,7 +3864,8 @@ void CBasePlayer::ItemPreFrame()
 	if (!m_pActiveItem)
 		return;
 
-	m_pActiveItem->ItemPreFrame( );
+	CBasePlayerItem* activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+	activeItem->ItemPreFrame( );
 }
 
 
@@ -3883,7 +3898,8 @@ void CBasePlayer::ItemPostFrame()
 	if (!m_pActiveItem)
 		return;
 
-	m_pActiveItem->ItemPostFrame( );
+	CBasePlayerItem* activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
+	activeItem->ItemPostFrame( );
 }
 
 int CBasePlayer::AmmoInventory( int iAmmoIndex )
@@ -4171,7 +4187,7 @@ void CBasePlayer :: UpdateClientData( void )
 	}
 
 	// Cache and client weapon change
-	m_pClientActiveItem = m_pActiveItem;
+	m_pClientActiveItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
 	m_iClientFOV = m_iFOV;
 
 	// Update Status Bar
@@ -4283,7 +4299,7 @@ Vector CBasePlayer :: GetAutoaimVector( float flDelta )
 		m_fOnTarget = 0;
 	else if (m_fOldTargeting != m_fOnTarget)
 	{
-		m_pActiveItem->UpdateItemInfo( );
+		((CBasePlayerItem*)m_pActiveItem.GetEntity())->UpdateItemInfo( );
 	}
 
 	if (angles.x > 180)
@@ -4658,7 +4674,7 @@ BOOL CBasePlayer :: SwitchWeapon( CBasePlayerItem *pWeapon )
 	
 	if (m_pActiveItem)
 	{
-		m_pActiveItem->Holster( );
+		((CBasePlayerItem*)m_pActiveItem.GetEntity())->Holster( );
 	}
 
 	m_pActiveItem = pWeapon;
