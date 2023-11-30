@@ -254,7 +254,7 @@ void CTentacle :: Spawn( )
 	pev->solid			= SOLID_BBOX;
 	pev->movetype		= MOVETYPE_FLY;
 	pev->effects		= 0;
-	pev->health			= 75;
+	pev->health			= 4000;
 	pev->sequence		= 0;
 
 	SET_MODEL(ENT(pev), "models/tentacle2.mdl");
@@ -274,7 +274,7 @@ void CTentacle :: Spawn( )
 	ResetSequenceInfo( );
 	m_iDir = 1;
 
-	pev->yaw_speed = 18;
+	pev->yaw_speed = 50;
 	m_flInitialYaw = pev->angles.y;
 	pev->ideal_yaw = m_flInitialYaw;
 
