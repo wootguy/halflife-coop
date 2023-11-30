@@ -180,8 +180,8 @@ public:
 	// usable player items 
 	EHANDLE m_rgpPlayerItems[MAX_ITEM_TYPES];
 	EHANDLE m_pActiveItem;
-	CBasePlayerItem *m_pClientActiveItem;  // client version of the active item
-	CBasePlayerItem *m_pLastItem;
+	EHANDLE m_pClientActiveItem;  // client version of the active item
+	EHANDLE m_pLastItem;
 	// shared ammo slots
 	int	m_rgAmmo[MAX_AMMO_SLOTS];
 	int	m_rgAmmoLast[MAX_AMMO_SLOTS];

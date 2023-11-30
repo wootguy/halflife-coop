@@ -827,9 +827,9 @@ int CBasePlayerWeapon::UpdateClientData( CBasePlayer *pPlayer )
 	
 	// This is the current or last weapon, so the state will need to be updated
 	if ( this == pPlayer->m_pActiveItem.GetEntity() ||
-		 this == pPlayer->m_pClientActiveItem )
+		 this == pPlayer->m_pClientActiveItem.GetEntity() )
 	{
-		if ( pPlayer->m_pActiveItem.GetEntity() != pPlayer->m_pClientActiveItem)
+		if ( pPlayer->m_pActiveItem.GetEntity() != pPlayer->m_pClientActiveItem.GetEntity())
 		{
 			bSend = TRUE;
 		}

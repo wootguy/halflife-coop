@@ -96,7 +96,7 @@ TYPEDESCRIPTION	CBasePlayer::m_playerSaveData[] =
 
 	DEFINE_ARRAY( CBasePlayer, m_rgpPlayerItems, FIELD_EHANDLE, MAX_ITEM_TYPES ),
 	DEFINE_FIELD( CBasePlayer, m_pActiveItem, FIELD_EHANDLE),
-	DEFINE_FIELD( CBasePlayer, m_pLastItem, FIELD_CLASSPTR ),
+	DEFINE_FIELD( CBasePlayer, m_pLastItem, FIELD_EHANDLE ),
 	
 	DEFINE_ARRAY( CBasePlayer, m_rgAmmo, FIELD_INTEGER, MAX_AMMO_SLOTS ),
 	DEFINE_FIELD( CBasePlayer, m_idrowndmg, FIELD_INTEGER ),
@@ -3194,7 +3194,7 @@ void CBasePlayer::SelectLastItem(void)
 		activeItem->Holster( );
 	
 	CBasePlayerItem *pTemp = activeItem;
-	m_pActiveItem = m_pLastItem;
+	m_pActiveItem = m_pLastItem.GetEntity();
 	m_pLastItem = pTemp;
 
 	if (m_pActiveItem) {
@@ -3771,7 +3771,7 @@ int CBasePlayer::RemovePlayerItem( CBasePlayerItem *pItem )
 		pev->viewmodel = 0;
 		pev->weaponmodel = 0;
 	}
-	else if ( m_pLastItem == pItem )
+	else if ( m_pLastItem.GetEntity() == pItem)
 		m_pLastItem = NULL;
 
 	CBasePlayerItem *pPrev = (CBasePlayerItem*)m_rgpPlayerItems[pItem->iItemSlot()].GetEntity();
