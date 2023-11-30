@@ -2434,34 +2434,48 @@ CBaseEntity *CBaseMonster :: BestVisibleEnemy ( void )
 	int			iBestRelationship;
 
 	iNearest = 8192;// so first visible entity will become the closest.
+	float bestDot = -1;
 	pNextEnt = m_pLink;
 	pReturn = NULL;
 	iBestRelationship = R_NO;
 
+	Vector forward, right, up;
+	UTIL_MakeVectorsPrivate(pev->angles, forward, right, up);
+	Vector flatOri = Vector(pev->origin.x, pev->origin.y, 0);
+
 	while ( pNextEnt != NULL )
 	{
-		if ( pNextEnt->IsAlive() )
+		int iRel = IRelationship(pNextEnt);
+
+		if ( pNextEnt->IsAlive() && iRel >= iBestRelationship)
 		{
-			if ( IRelationship( pNextEnt) > iBestRelationship )
+			Vector flatTargetOri = Vector(pNextEnt->pev->origin.x, pNextEnt->pev->origin.y, 0);
+			Vector delta = (flatTargetOri - flatOri).Normalize();
+			float dot = DotProduct(forward, delta);
+			iDist = (pNextEnt->pev->origin - pev->origin).Length();
+
+			if (iRel > iBestRelationship)
 			{
 				// this entity is disliked MORE than the entity that we 
 				// currently think is the best visible enemy. No need to do 
 				// a distance check, just get mad at this one for now.
-				iBestRelationship = IRelationship ( pNextEnt );
-				iNearest = ( pNextEnt->pev->origin - pev->origin ).Length();
+				iBestRelationship = IRelationship(pNextEnt);
+				iNearest = iDist;
+				bestDot = dot;
 				pReturn = pNextEnt;
 			}
-			else if ( IRelationship( pNextEnt) == iBestRelationship )
+			else if (iRel == iBestRelationship)
 			{
 				// this entity is disliked just as much as the entity that
 				// we currently think is the best visible enemy, so we only
-				// get mad at it if it is closer.
-				iDist = ( pNextEnt->pev->origin - pev->origin ).Length();
-				
-				if ( iDist <= iNearest )
+				// get mad at it if it is significantly closer or about the
+				// same distance but better aligned with our current aim direction
+
+				if (iDist < iNearest - 128 || (iDist < iNearest + 128 && dot > bestDot))
 				{
 					iNearest = iDist;
-					iBestRelationship = IRelationship ( pNextEnt );
+					bestDot = dot;
+					iBestRelationship = IRelationship(pNextEnt);
 					pReturn = pNextEnt;
 				}
 			}
@@ -3360,6 +3374,9 @@ BOOL CBaseMonster :: GetEnemy ( void )
 	if ( HasConditions(bits_COND_SEE_HATE | bits_COND_SEE_DISLIKE | bits_COND_SEE_NEMESIS) )
 	{
 		pNewEnemy = BestVisibleEnemy();
+		
+		const char* current = m_hEnemy ? STRING(m_hEnemy->pev->netname) : "NULL";
+		ALERT(at_console, "Current: %s, Best: %s\n", current, STRING(pNewEnemy->pev->netname));
 
 		if ( pNewEnemy != m_hEnemy && pNewEnemy != NULL)
 		{
@@ -3375,6 +3392,7 @@ BOOL CBaseMonster :: GetEnemy ( void )
 					SetConditions(bits_COND_NEW_ENEMY);
 					m_hEnemy = pNewEnemy;
 					m_vecEnemyLKP = m_hEnemy->pev->origin;
+					
 				}
 				// if the new enemy has an owner, take that one as well
 				if (pNewEnemy->pev->owner != NULL)
@@ -3394,6 +3412,7 @@ BOOL CBaseMonster :: GetEnemy ( void )
 		{
 			if ( m_pSchedule->iInterruptMask & bits_COND_NEW_ENEMY )
 			{
+				ALERT(at_console, "POP NEW ENEMY %s\n", STRING(m_hEnemy->pev->netname));
 				SetConditions(bits_COND_NEW_ENEMY);
 			}
 		}

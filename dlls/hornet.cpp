@@ -147,7 +147,7 @@ int CHornet::IRelationship ( CBaseEntity *pTarget )
 
 	if (!FNullEnt(pev->owner)) {
 		CBaseMonster* owner = CBaseEntity::Instance(pev->owner)->MyMonsterPointer();
-		if (owner->IsPlayer()) {
+		if (owner && owner->IsPlayer()) {
 			return owner->IRelationship(pTarget);
 		}
 	}
