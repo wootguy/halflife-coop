@@ -94,7 +94,7 @@ TYPEDESCRIPTION	CBasePlayer::m_playerSaveData[] =
 	DEFINE_ARRAY( CBasePlayer, m_rgflSuitNoRepeatTime, FIELD_TIME, CSUITNOREPEAT ),
 	DEFINE_FIELD( CBasePlayer, m_lastDamageAmount, FIELD_INTEGER ),
 
-	DEFINE_ARRAY( CBasePlayer, m_rgpPlayerItems, FIELD_CLASSPTR, MAX_ITEM_TYPES ),
+	DEFINE_ARRAY( CBasePlayer, m_rgpPlayerItems, FIELD_EHANDLE, MAX_ITEM_TYPES ),
 	DEFINE_FIELD( CBasePlayer, m_pActiveItem, FIELD_EHANDLE),
 	DEFINE_FIELD( CBasePlayer, m_pLastItem, FIELD_CLASSPTR ),
 	
@@ -709,7 +709,7 @@ void CBasePlayer::PackDeadPlayerItems( void )
 		if ( m_rgpPlayerItems[ i ] )
 		{
 			// there's a weapon here. Should I pack it?
-			CBasePlayerItem *pPlayerItem = m_rgpPlayerItems[ i ];
+			CBasePlayerItem *pPlayerItem = (CBasePlayerItem*)m_rgpPlayerItems[ i ].GetEntity();
 
 			while ( pPlayerItem )
 			{
@@ -827,7 +827,7 @@ void CBasePlayer::RemoveAllItems( BOOL removeSuit )
 	CBasePlayerItem *pPendingItem;
 	for (i = 0; i < MAX_ITEM_TYPES; i++)
 	{
-		m_pActiveItem = m_rgpPlayerItems[i];
+		m_pActiveItem = m_rgpPlayerItems[i].GetEntity();
 		while (m_pActiveItem)
 		{
 			CBasePlayerItem* item = (CBasePlayerItem*)m_pActiveItem.GetEntity();
@@ -2667,7 +2667,7 @@ pt_end:
 	{
 		if ( m_rgpPlayerItems[ i ] )
 		{
-			CBasePlayerItem *pPlayerItem = m_rgpPlayerItems[ i ];
+			CBasePlayerItem *pPlayerItem = (CBasePlayerItem*)m_rgpPlayerItems[ i ].GetEntity();
 
 			while ( pPlayerItem )
 			{
@@ -3077,7 +3077,7 @@ void CBasePlayer::SelectNextItem( int iItem )
 {
 	CBasePlayerItem *pItem;
 
-	pItem = m_rgpPlayerItems[ iItem ];
+	pItem = (CBasePlayerItem*)m_rgpPlayerItems[ iItem ].GetEntity();
 	CBasePlayerItem* activeItem = (CBasePlayerItem*)m_pActiveItem.GetEntity();
 
 	if (!pItem)
@@ -3132,7 +3132,7 @@ void CBasePlayer::SelectItem(const char *pstr)
 	{
 		if (m_rgpPlayerItems[i])
 		{
-			pItem = m_rgpPlayerItems[i];
+			pItem = (CBasePlayerItem*)m_rgpPlayerItems[i].GetEntity();
 	
 			while (pItem)
 			{
@@ -3704,7 +3704,7 @@ int CBasePlayer::AddPlayerItem( CBasePlayerItem *pItem )
 {
 	CBasePlayerItem *pInsert;
 	
-	pInsert = m_rgpPlayerItems[pItem->iItemSlot()];
+	pInsert = (CBasePlayerItem*)m_rgpPlayerItems[pItem->iItemSlot()].GetEntity();
 
 	while (pInsert)
 	{
@@ -3738,7 +3738,7 @@ int CBasePlayer::AddPlayerItem( CBasePlayerItem *pItem )
 		g_pGameRules->PlayerGotWeapon ( this, pItem );
 		pItem->CheckRespawn();
 
-		pItem->m_pNext = m_rgpPlayerItems[pItem->iItemSlot()];
+		pItem->m_pNext = (CBasePlayerItem*)m_rgpPlayerItems[pItem->iItemSlot()].GetEntity();
 		m_rgpPlayerItems[pItem->iItemSlot()] = pItem;
 
 		// should we switch to this item?
@@ -3774,7 +3774,7 @@ int CBasePlayer::RemovePlayerItem( CBasePlayerItem *pItem )
 	else if ( m_pLastItem == pItem )
 		m_pLastItem = NULL;
 
-	CBasePlayerItem *pPrev = m_rgpPlayerItems[pItem->iItemSlot()];
+	CBasePlayerItem *pPrev = (CBasePlayerItem*)m_rgpPlayerItems[pItem->iItemSlot()].GetEntity();
 
 	if (pPrev == pItem)
 	{
@@ -4183,7 +4183,7 @@ void CBasePlayer :: UpdateClientData( void )
 	for ( int i = 0; i < MAX_ITEM_TYPES; i++ )
 	{
 		if ( m_rgpPlayerItems[i] )  // each item updates it's successors
-			m_rgpPlayerItems[i]->UpdateClientData( this );
+			((CBasePlayerItem*)m_rgpPlayerItems[i].GetEntity())->UpdateClientData( this );
 	}
 
 	// Cache and client weapon change
@@ -4543,7 +4543,7 @@ void CBasePlayer::DropPlayerItem ( char *pszItemName )
 
 	for ( i = 0 ; i < MAX_ITEM_TYPES ; i++ )
 	{
-		pWeapon = m_rgpPlayerItems[ i ];
+		pWeapon = (CBasePlayerItem*)m_rgpPlayerItems[ i ].GetEntity();
 
 		while ( pWeapon )
 		{
@@ -4621,7 +4621,7 @@ void CBasePlayer::DropPlayerItem ( char *pszItemName )
 //=========================================================
 BOOL CBasePlayer::HasPlayerItem( CBasePlayerItem *pCheckItem )
 {
-	CBasePlayerItem *pItem = m_rgpPlayerItems[pCheckItem->iItemSlot()];
+	CBasePlayerItem *pItem = (CBasePlayerItem*)m_rgpPlayerItems[pCheckItem->iItemSlot()].GetEntity();
 
 	while (pItem)
 	{
@@ -4645,7 +4645,7 @@ BOOL CBasePlayer::HasNamedPlayerItem( const char *pszItemName )
  
 	for ( i = 0 ; i < MAX_ITEM_TYPES ; i++ )
 	{
-		pItem = m_rgpPlayerItems[ i ];
+		pItem = (CBasePlayerItem*)m_rgpPlayerItems[ i ].GetEntity();
 		
 		while (pItem)
 		{

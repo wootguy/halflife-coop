@@ -340,7 +340,7 @@ BOOL CHalfLifeMultiplay :: GetNextBestWeapon( CBasePlayer *pPlayer, CBasePlayerI
 
 	for ( i = 0 ; i < MAX_ITEM_TYPES ; i++ )
 	{
-		pCheck = pPlayer->m_rgpPlayerItems[ i ];
+		pCheck = (CBasePlayerItem*)pPlayer->m_rgpPlayerItems[ i ].GetEntity();
 
 		while ( pCheck )
 		{
@@ -960,7 +960,7 @@ BOOL CHalfLifeMultiplay::CanHavePlayerItem( CBasePlayer *pPlayer, CBasePlayerIte
 		// check if the player already has this weapon
 		for ( int i = 0 ; i < MAX_ITEM_TYPES ; i++ )
 		{
-			CBasePlayerItem *it = pPlayer->m_rgpPlayerItems[i];
+			CBasePlayerItem *it = (CBasePlayerItem*)pPlayer->m_rgpPlayerItems[i].GetEntity();
 
 			while ( it != NULL )
 			{

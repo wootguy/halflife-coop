@@ -1606,7 +1606,7 @@ int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
 		if ( pl->m_rgpPlayerItems[ i ] )
 		{
 			// there's a weapon here. Should I pack it?
-			CBasePlayerItem *pPlayerItem = pl->m_rgpPlayerItems[ i ];
+			CBasePlayerItem *pPlayerItem = (CBasePlayerItem*)pl->m_rgpPlayerItems[ i ].GetEntity();
 
 			while ( pPlayerItem )
 			{

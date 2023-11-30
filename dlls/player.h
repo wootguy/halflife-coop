@@ -178,7 +178,7 @@ public:
 	int			m_iFOV;			// field of view
 	int			m_iClientFOV;	// client's known FOV
 	// usable player items 
-	CBasePlayerItem	*m_rgpPlayerItems[MAX_ITEM_TYPES];
+	EHANDLE m_rgpPlayerItems[MAX_ITEM_TYPES];
 	EHANDLE m_pActiveItem;
 	CBasePlayerItem *m_pClientActiveItem;  // client version of the active item
 	CBasePlayerItem *m_pLastItem;
