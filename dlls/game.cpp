@@ -450,8 +450,12 @@ cvar_t	sk_player_leg3	= { "sk_player_leg3","1" };
 
 // END Cvars for Skill Level settings
 
+float g_shutdowntime = 0;
+
 #include "cbase.h"
 #include "player.h"
+#include <string>
+using namespace std;
 
 void giball() {
 	for (int i = 1; i <= gpGlobals->maxClients; i++) {
@@ -483,6 +487,29 @@ void triggerTarget() {
 	ALERT(at_console, UTIL_VarArgs("Triggered %d entities\n", count));
 }
 
+// assumes you have a script set up to replace the mod dll when the server crashes/restarts
+void hardRestart() {
+	string reason = "Co-op mod updating. You should be able to reconnect now.";
+	if (CMD_ARGC() > 1) {
+		reason = CMD_ARGS();
+	}
+
+	for (int i = 1; i <= gpGlobals->maxClients; i++) {
+		edict_t* ent = INDEXENT(i);
+		CBasePlayer* plr = (CBasePlayer*)GET_PRIVATE(ent);
+		if (!plr || !STRING(plr->pev->netname) || (plr->pev->flags & FL_FAKECLIENT)) {
+			continue;
+		}
+
+		string cmd = "kick #" + to_string(g_engfuncs.pfnGetPlayerUserId(ent)) + " " + reason + "\n";
+		g_engfuncs.pfnServerCommand((char*)cmd.c_str());
+		g_engfuncs.pfnServerExecute();
+	}
+
+	// wait a bit for the messages to send
+	g_shutdowntime = g_engfuncs.pfnTime() + 0.5f;
+}
+
 // Register your console variables here
 // This gets called one time when the game is initialied
 void GameDLLInit( void )
@@ -495,6 +522,7 @@ void GameDLLInit( void )
 
 	g_engfuncs.pfnAddServerCommand("giball", giball);
 	g_engfuncs.pfnAddServerCommand("trigger", triggerTarget);
+	g_engfuncs.pfnAddServerCommand("modupdate", hardRestart);
 
 	CVAR_REGISTER (&displaysoundlist);
 	CVAR_REGISTER( &allow_spectators );

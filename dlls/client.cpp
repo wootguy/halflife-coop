@@ -798,6 +798,12 @@ void StartFrame( void )
 
 	gpGlobals->teamplay = teamplay.value;
 	g_ulFrameCount++;
+
+	if (g_shutdowntime && g_engfuncs.pfnTime() >= g_shutdowntime) {
+		g_engfuncs.pfnServerCommand((char*)"quit\n");
+		g_engfuncs.pfnServerExecute();
+		g_shutdowntime = 0;
+	}
 }
 
 
