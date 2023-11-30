@@ -145,10 +145,11 @@ int CHornet::IRelationship ( CBaseEntity *pTarget )
 		return R_NO;
 	}
 
-	if (!FNullEnt(pev->owner)) {
-		CBaseMonster* owner = CBaseEntity::Instance(pev->owner)->MyMonsterPointer();
-		if (owner && owner->IsPlayer()) {
-			return owner->IRelationship(pTarget);
+	CBaseEntity* owner = CBaseEntity::Instance(pev->owner);
+	if (!FNullEnt(pev->owner) && owner) {
+		CBaseMonster* mon = owner->MyMonsterPointer();
+		if (mon && mon->IsPlayer()) {
+			return mon->IRelationship(pTarget);
 		}
 	}
 
