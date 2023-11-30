@@ -3376,7 +3376,6 @@ BOOL CBaseMonster :: GetEnemy ( void )
 		pNewEnemy = BestVisibleEnemy();
 		
 		const char* current = m_hEnemy ? STRING(m_hEnemy->pev->netname) : "NULL";
-		ALERT(at_console, "Current: %s, Best: %s\n", current, STRING(pNewEnemy->pev->netname));
 
 		if ( pNewEnemy != m_hEnemy && pNewEnemy != NULL)
 		{
@@ -3412,7 +3411,6 @@ BOOL CBaseMonster :: GetEnemy ( void )
 		{
 			if ( m_pSchedule->iInterruptMask & bits_COND_NEW_ENEMY )
 			{
-				ALERT(at_console, "POP NEW ENEMY %s\n", STRING(m_hEnemy->pev->netname));
 				SetConditions(bits_COND_NEW_ENEMY);
 			}
 		}
