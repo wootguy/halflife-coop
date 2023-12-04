@@ -277,10 +277,10 @@ void CBaseTurret::Spawn()
 	TraceResult trUp, trDown;
 	TRACE_LINE(pev->origin, pev->origin + Vector(0,0,1), ignore_monsters, NULL, &trUp);
 	TRACE_LINE(pev->origin, pev->origin - Vector(0, 0, 1), ignore_monsters, NULL, &trDown);
-	if (trUp.flFraction <= PAS_EPSILON) {
+	if (trUp.flFraction <= 0.1f) {
 		UTIL_SetOrigin(pev, pev->origin - Vector(0, 0, PAS_EPSILON));
 	}
-	else if (trDown.flFraction <= PAS_EPSILON) {
+	else if (trDown.flFraction <= 0.1f) {
 		UTIL_SetOrigin(pev, pev->origin + Vector(0, 0, PAS_EPSILON));
 	}
 }
@@ -1201,16 +1201,11 @@ void CSentry::Shoot(Vector &vecSrc, Vector &vecDirToEnemy)
 {
 	FireBullets( 1, vecSrc, vecDirToEnemy, TURRET_SPREAD, TURRET_RANGE, BULLET_MONSTER_MP5, 1 );
 
-	static Vector oldOrigin;
-	if (oldOrigin.x == 0) {
-		oldOrigin = pev->origin;
-	}
-
 	switch(RANDOM_LONG(0,2))
 	{
-	case 0: EMIT_SOUND(ENT(pev), CHAN_VOICE, "weapons/hks1.wav", 1, ATTN_NORM); break;
-	case 1: EMIT_SOUND(ENT(pev), CHAN_VOICE, "weapons/hks2.wav", 1, ATTN_NORM); break;
-	case 2: EMIT_SOUND(ENT(pev), CHAN_VOICE, "weapons/hks3.wav", 1, ATTN_NORM); break;
+	case 0: EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/hks1.wav", 1, ATTN_NORM); break;
+	case 1: EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/hks2.wav", 1, ATTN_NORM); break;
+	case 2: EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/hks3.wav", 1, ATTN_NORM); break;
 	}
 
 	pev->effects = pev->effects | EF_MUZZLEFLASH;
