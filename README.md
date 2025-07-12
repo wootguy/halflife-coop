@@ -1,3 +1,9 @@
+# Project Abandoned (RIP 2023-2023)
+
+This project was made in a rush to fix some problems I was having with [Half-Life Co-op (2019)](https://www.moddb.com/mods/hlcoop) during the 25th anniversary of Half-Life. I've since moved on to this other [Half-Life Co-op](https://github.com/wootguy/SevenKewp) mod. You may prefer using this project anyway if you want the most vanilla HL co-op experience possible. It's based on the legacy version of HL and doesn't have any of the new stuff from HL25.
+
+
+
 Half Life 1 SDK LICENSE
 ======================
 
